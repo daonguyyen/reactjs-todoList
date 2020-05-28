@@ -11,7 +11,12 @@ export default class App extends Component {
     this.state = {
       tasks: [],
       isDisplayForm: false, //Buoc 1
-      taskEditing: null
+      taskEditing: null,
+      filter : {
+        name : '',
+        status : -1
+      },
+      keyword : ''
     }
   }
 
@@ -155,9 +160,48 @@ export default class App extends Component {
     this.onShowForm()
   }
 
+  onFilter = (filterName, filterStatus) => {
+    console.log(filterName + '-' + filterStatus)
+    filterStatus = +filterStatus //filterStatus = parseInt(filterStatus)
+    this.setState({
+      filter : {
+        name : filterName.toLowerCase(),
+        status : filterStatus
+      }
+    })
+  }
+
+  onSearch = (keyword) => {
+    this.setState({
+      keyword : keyword
+    })
+  }
+
   render() {
 
-    var { tasks, isDisplayForm /** buoc 2*/, taskEditing } = this.state
+    var { tasks, isDisplayForm /** buoc 2*/, taskEditing, filter, keyword } = this.state
+
+    if(filter){
+      if(filter.name) {
+        tasks = tasks.filter((task) => {
+          return task.name.toLowerCase().indexOf(filter.name) !== -1;
+        })
+      }
+      tasks = tasks.filter((task) => {
+        if(filter.status === -1){
+          return task
+        }else{
+          return task.status === (filter.status === 1 ? true : false )
+        }
+      })
+    }
+
+    if(keyword){
+      tasks = tasks.filter((task) => {
+        return task.name.toLowerCase().indexOf(keyword) !== -1;
+      })
+    }
+
     var elmTaskForm = isDisplayForm ?
       <TaskForm 
                 onSubmit={this.onSubmit} 
@@ -184,13 +228,14 @@ export default class App extends Component {
               Generate Data
             </button> */}
             {/* Search - Sort */}
-            <Control />
+            <Control onSearch={this.onSearch} />
             {/* List */}
             <TaskList 
                     taskList={tasks} 
                     onUpdateStatus={this.onUpdateStatus} 
                     onDelete={this.onDelete}
-                    onUpdate={this.onUpdate} />
+                    onUpdate={this.onUpdate} 
+                    onFilter={this.onFilter}/>
           </div>
         </div>
       </div>
