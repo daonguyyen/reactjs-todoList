@@ -1,7 +1,26 @@
 import React, { Component } from 'react'
 
 export default class Sort extends Component {
+
+    state = {
+        sort : {
+            by : 'name',
+            value : 1
+        }
+    }
+
+    onClick = async(sortBy, sortValue) => {
+        await this.setState({
+            sort : {
+                by : sortBy,
+                value : sortValue
+            }
+        })
+        this.props.onSort(this.state.sort)
+    }
+    
     render() {
+        var { sort } = this.state;
         return (
             <div className="col-xs-6 col-sm-6 col-md-6 col-lg-6">
                 <div className="dropdown">
@@ -9,23 +28,23 @@ export default class Sort extends Component {
                         Sắp Xếp <span className="fa fa-caret-square-o-down ml-5" />
                     </button>
                     <ul className="dropdown-menu" aria-labelledby="dropdownMenu1">
-                        <li>
-                            <a href="#" role="button">
+                        <li onClick={ () => this.onClick('name', 1)}>
+                            <a href="#" role="button" className={(sort.by === 'name' && sort.value === 1) ? 'sort_selected' : ''}>
                                 <span className="fa fa-sort-alpha-asc pr-5">
-                                    Tên Ax-Z
+                                    Tên A-Z
                                 </span>
                             </a>
                         </li>
-                        <li>
-                            <a href="" role="button">
+                        <li onClick={ () => this.onClick('name', -1)}>
+                            <a href="#" role="button" className={(sort.by === 'name' && sort.value === -1) ? 'sort_selected' : ''}>
                                 <span className="fa fa-sort-alpha-desc pr-5">
                                     Tên Z-A
                                 </span>
                             </a>
                         </li>
                         <li role="separator" className="divider" />
-                        <li><a href="" role="button">Trạng Thái Kích Hoạt</a></li>
-                        <li><a href="" role="button">Trạng Thái Ẩn</a></li>
+                        <li onClick={ () => this.onClick('status', 1)}><a href="#" role="button" className={(sort.by === 'status' && sort.value === 1) ? 'sort_selected' : ''}>Trạng Thái Kích Hoạt</a></li>
+                        <li onClick={ () => this.onClick('status', -1)}><a href="#" role="button" className={(sort.by === 'status' && sort.value === -1) ? 'sort_selected' : ''}>Trạng Thái Ẩn</a></li>
                         
                     </ul>
                 </div>

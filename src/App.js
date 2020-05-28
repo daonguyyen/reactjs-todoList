@@ -16,7 +16,11 @@ export default class App extends Component {
         name : '',
         status : -1
       },
-      keyword : ''
+      keyword : '',
+      sort : {  //Mac dinh: sort theo name va tang dan
+        by : 'name',
+        value : 1
+      }
     }
   }
 
@@ -177,9 +181,15 @@ export default class App extends Component {
     })
   }
 
+  onSort = sort => {
+    this.setState({
+      sort : sort
+    })
+  }
+
   render() {
 
-    var { tasks, isDisplayForm /** buoc 2*/, taskEditing, filter, keyword } = this.state
+    var { tasks, isDisplayForm /** buoc 2*/, taskEditing, filter, keyword, sort } = this.state
 
     if(filter){
       if(filter.name) {
@@ -199,6 +209,21 @@ export default class App extends Component {
     if(keyword){
       tasks = tasks.filter((task) => {
         return task.name.toLowerCase().indexOf(keyword) !== -1;
+      })
+    }
+    
+    //Sort
+    if(sort.by === 'name'){
+      tasks.sort((a, b) => {
+        if(a.name > b.name) return sort.value;
+        else if (a.name < b.name) return -sort.value;
+        else return 0;
+      })
+    }else {
+      tasks.sort((a, b) => {
+        if(a.status > b.status) return -sort.value;
+        else if (a.status < b.status) return sort.value;
+        else return 0;
       })
     }
 
@@ -228,7 +253,7 @@ export default class App extends Component {
               Generate Data
             </button> */}
             {/* Search - Sort */}
-            <Control onSearch={this.onSearch} />
+            <Control onSearch={this.onSearch} onSort={this.onSort}/>
             {/* List */}
             <TaskList 
                     taskList={tasks} 
